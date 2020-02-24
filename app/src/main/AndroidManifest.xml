@@ -26,6 +26,6 @@
                 android:resource="@xml/widget_info" />
         </receiver>
 
-    </application>
 
+    </application>
 </manifest>
