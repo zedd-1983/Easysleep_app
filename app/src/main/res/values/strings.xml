@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Easysleep</string>
+    <string name="toggle_bt">Toggle BT</string>
     <string name="disable_bt">Disable BT</string>
     <string name="enable_bt">Enable BT</string>
+    <string name="discover_bt">Discover BT</string>
+    <string name="list_bt">List</string>
 </resources>

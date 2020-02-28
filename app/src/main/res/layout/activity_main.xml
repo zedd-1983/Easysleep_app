@@ -1,29 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
     tools:context=".MainActivity">
+    
+    <TextView
+        android:id="@+id/btStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text=""
+        android:textSize="20sp"
+        android:textColor="#000000"
+        />
+
+    <ImageView
+        android:id="@+id/btIcon"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        />
 
     <Button
-        android:id="@+id/btEnable"
+        android:id="@+id/btToggle"
+        android:minWidth="200dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="168dp"
-        android:text="@string/enable_bt"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="25dp"
+        android:text="@string/toggle_bt"
+        style="@style/Widget.AppCompat.Button.Colored"
+        />
 
     <Button
-        android:id="@+id/btDisable"
+        android:id="@+id/btDiscover"
+        android:minWidth="200dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/disable_bt"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btEnable" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:text="@string/discover_bt"
+        style="@style/Widget.AppCompat.Button.Colored"
+        />
+
+    <Button
+        android:id="@+id/btList"
+        android:minWidth="200dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="25dp"
+        android:text="@string/list_bt"
+        style="@style/Widget.AppCompat.Button.Colored"
+        />
+
+    <TextView
+        android:id="@+id/paired_devices_tv"
+        android:minWidth="200dp"
+        android:minHeight="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="#000000"
+        />
+</LinearLayout>
