@@ -4,11 +4,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         btToggleButton = findViewById(R.id.btToggle);
         btDiscover = findViewById(R.id.btDiscover);
@@ -57,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             btIcon.setImageResource(R.drawable.bt_off);
         }
+
+        IntentFilter filter  = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        registerReceiver(mBroadcastReceiver4, filter);
+
 
         btToggleButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,50 +136,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     private void showToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG);
     }
 
-//    private void bluetoothOff() {
-//        btOffButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(myBluetooth.isEnabled()) {
-//                    myBluetooth.disable();
-//                }
-//            }
-//        });
-//    }
-//
-//    private void bluetoothOn()
-//    {
-//        btOnButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(myBluetooth == null) {
-//                    Toast.makeText(getApplicationContext(), "Bluetooth not supported", Toast.LENGTH_SHORT).show();
-//                }
-//                else
-//                {
-//                    if(!myBluetooth.isEnabled())
-//                    {
-//                        startActivityForResult(enableBluetoothIntent, REQUEST_BT_ENABLE);
-//                    }
-//                }
-//            }
-//        });
-//    }
+    private final BroadcastReceiver mBroadcastReceiver4 = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-//    {
-//        if(requestCode == REQUEST_BT_ENABLE) {
-//            if(resultCode == RESULT_OK) {
-//                Toast.makeText(getApplicationContext(), "Bluetooth is enabled", Toast.LENGTH_LONG).show();
-//            } else if (resultCode == RESULT_CANCELED) {
-//                Toast.makeText(getApplicationContext(), "Bluetooth enabling cancelled", Toast.LENGTH_LONG).show();
-//            }
-//        }
-//    }
+            if(action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
+                BluetoothDevice mDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+                switch(mDevice.getBondState()) {
+                    case BluetoothDevice.BOND_BONDED:
+                        Log.e("info", "BroadcastRececeiver: BOND_BONDED");
+                        break;
+                    case BluetoothDevice.BOND_BONDING:
+                        Log.e("info", "BroadcastReceiver: BOND_BONDING");
+                        break;
+                    case BluetoothDevice.BOND_NONE:
+                        Log.e("info", "BroadcastReceiver: BOND_NONE");
+                        break;
+                }
+            }
+        }
+    };
 }
