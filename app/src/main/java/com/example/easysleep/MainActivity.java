@@ -3,6 +3,7 @@ package com.example.easysleep;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -63,12 +66,8 @@ public class MainActivity extends AppCompatActivity {
 
                     Intent btIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                     startActivityForResult(btIntent, REQUEST_BT_ENABLE);
-                    //myBluetooth.enable();
-                    //btIcon.setImageResource(R.drawable.bt_on);
                 } else {
                     showToast("Turning BT off");
-
-                    Intent btIntent = new Intent(BluetoothAdapter.)
                     myBluetooth.disable();
                     btIcon.setImageResource(R.drawable.bt_off);
                 }
@@ -91,6 +90,15 @@ public class MainActivity extends AppCompatActivity {
         btList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(myBluetooth.isEnabled()) {
+                    btPairedList.setText("Paired Devices");
+                    Set<BluetoothDevice> devices = myBluetooth.getBondedDevices();
+                    for (BluetoothDevice device : devices) {
+                        btPairedList.append("\nDevice " + device.getName() + ", " + device);
+                    }
+                } else {
+                    showToast("Turn on bluetooth to acquire list of paired devices first");
+                }
 
             }
         });
