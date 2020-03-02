@@ -63,7 +63,7 @@
         style="@style/Widget.AppCompat.Button.Colored"
         />
 
-    <TextView
+    <ListView
         android:id="@+id/paired_devices_tv"
         android:minWidth="200dp"
         android:minHeight="100dp"

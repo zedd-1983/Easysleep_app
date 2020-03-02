@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,24 +12,34 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Set;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_BT_ENABLE = 0;
     private static final int REQUEST_BT_DISCOVER = 1;
 
+
+    UUID MY_UUID = UUID.fromString("74bb3f1b-7130-4aa7-a083-4b081d0bc052");
+
     TextView btStatus, btPairedList;
     Button btToggleButton, btDiscover, btList;
     ImageView btIcon;
+    ListView lv;
 
     BluetoothAdapter myBluetooth;
+    BluetoothDevice[] btArray = new BluetoothDevice[20];
     Intent enableBluetoothIntent;
 
     @Override
@@ -42,7 +53,8 @@ public class MainActivity extends AppCompatActivity {
         btList = findViewById(R.id.btList);
 
         btStatus = findViewById(R.id.btStatus);
-        btPairedList = findViewById(R.id.paired_devices_tv);
+        //btPairedList = findViewById(R.id.paired_devices_tv);
+        lv = findViewById(R.id.paired_devices_tv);
 
         btIcon = findViewById(R.id.btIcon);
 
@@ -100,19 +112,36 @@ public class MainActivity extends AppCompatActivity {
         btList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(myBluetooth.isEnabled()) {
-                    btPairedList.setText("Paired Devices");
-                    Set<BluetoothDevice> devices = myBluetooth.getBondedDevices();
-                    for (BluetoothDevice device : devices) {
-                        btPairedList.append("\nDevice " + device.getName() + ", " + device);
-                    }
-                } else {
-                    showToast("Turn on bluetooth to acquire list of paired devices first");
-                }
+                Set<BluetoothDevice> bt = myBluetooth.getBondedDevices();
+                ArrayList<String> btNames = new ArrayList<>();
+                //int index = 0;
 
+                if(bt.size() > 0) {
+                    for(BluetoothDevice device : bt) {
+                       // btDevices[index] = device;
+                        btNames.add(device.getName() + "\n" + device.getAddress());
+                        //index++;
+                    }
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, btNames);
+                    lv.setAdapter(arrayAdapter);
+                }
             }
         });
 
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                BluetoothDevice device = btArray[position];
+
+                BluetoothSocket btSocket = null;
+                myBluetooth.cancelDiscovery();
+                try {
+                    btSocket = btArray[position].createRfcommSocketToServiceRecord(MY_UUID);
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
