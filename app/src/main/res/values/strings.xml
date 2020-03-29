@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Easysleep</string>
+    <string name="connect_to_easysleep">Connect to Easysleep</string>
+    <string name="test">test</string>
+    <string name="toggle_bt">toggle_bt</string>
+    <string name="bt_status_icon">bt_status_icon</string>
 </resources>
