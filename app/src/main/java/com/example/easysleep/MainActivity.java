@@ -48,22 +48,29 @@ public class MainActivity extends AppCompatActivity {
             String action = intent.getAction();
             Log.i("Action", action);
 
-            if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+            if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action))
+            {
                 statusView.setText("Finished");
                 searchButton.setEnabled(true);
-            } else if (action.equals(BluetoothDevice.ACTION_FOUND)) {
+            }
+            else if (action.equals(BluetoothDevice.ACTION_FOUND))
+            {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 String name = device.getName();
                 String address = device.getAddress();
                 String rssi = Integer.toString(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE));
                 Log.i("Device found", "Name: " + name + " Address: " + address + " RSSI: " + rssi);
 
-                if(name.equals("SONAR064844")) {
+                // this will be replaced by Easysleep BT
+                if(name.equals("SONAR064844"))
+                {
                     showToast("Sonaro available");
-                    statusView.setText("Sonaro available");
+                    statusView.setText("Sonaro found");
                     btAdapter.cancelDiscovery();
                     connectButton.setEnabled(true);
                 }
+
+                btIcon.setImageResource(R.drawable.bt_on1);
                /*
                 if(!addresses.contains(address)) {
                     addresses.add(address);
@@ -78,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
                     bluetoothDevices.add(deviceString);
                     //arrayAdapter.notifyDataSetChanged();
                 }
-
                 */
             }
         }
@@ -116,9 +122,9 @@ public class MainActivity extends AppCompatActivity {
 
         // display BT status icon
         if(btAdapter.isEnabled()) {
-            btIcon.setImageResource(R.drawable.bt_on);
+            btIcon.setImageResource(R.drawable.bt_on1);
         } else {
-            btIcon.setImageResource(R.drawable.bt_off);
+            btIcon.setImageResource(R.drawable.bt_off1);
         }
 
         // toggle Bluetooth adapter
@@ -133,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     showToast("Turning BT off");
                     btAdapter.disable();
-                    btIcon.setImageResource(R.drawable.bt_off);
+                    btIcon.setImageResource(R.drawable.bt_off1);
                 }
             }
         });
@@ -143,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(btAdapter.isEnabled()) {
+                    btIcon.setImageResource(R.drawable.bt_search1);
                     statusView.setText("Searching...");
                     searchButton.setEnabled(false);
                     bluetoothDevices.clear();
@@ -179,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case REQUEST_BT_ENABLE:
                 if (resultCode == RESULT_OK) {
-                    btIcon.setImageResource(R.drawable.bt_on);
+                    btIcon.setImageResource(R.drawable.bt_on1);
                     showToast("Bluetooth is on");
                 } else {
                     showToast("Couldn't turn Bluetooth on");
