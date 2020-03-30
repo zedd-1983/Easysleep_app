@@ -29,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_BT_ENABLE = 0;
     private static final int REQUEST_BT_DISCOVER = 1;
 
+    UUID MY_UUID =  UUID.fromString("5e1c3306-72c5-11ea-bc55-0242ac130003");
+    //ConnectThread connectThread;
+
     Button searchButton;
     Button toggleBTButton;
     Button connectButton;
@@ -37,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     TextView statusView;
 
     BluetoothAdapter btAdapter;
+    BluetoothDevice device;
     Intent enableBTIntent;
 
     ArrayList<String> bluetoothDevices = new ArrayList<>();
@@ -55,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             }
             else if (action.equals(BluetoothDevice.ACTION_FOUND))
             {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 String name = device.getName();
                 String address = device.getAddress();
                 String rssi = Integer.toString(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE));
@@ -140,6 +144,13 @@ public class MainActivity extends AppCompatActivity {
                     showToast("Turning BT off");
                     btAdapter.disable();
                     btIcon.setImageResource(R.drawable.bt_off1);
+                    /*
+                    if(connectThread.isAlive()) {
+                        connectThread.cancel();
+                        showToast("ConnectThread ended");
+                    }
+
+                     */
                 }
             }
         });
@@ -161,7 +172,59 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-    }
+
+        connectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ConnectThread connectThread = new ConnectThread(device);
+                connectThread.start();
+            }
+        });
+    } // onCreate
+
+    private class ConnectThread extends Thread {
+        private final BluetoothSocket mmSocket;
+        private final BluetoothDevice mmDevice;
+
+        public ConnectThread(BluetoothDevice device) {
+            BluetoothSocket tmp = null;
+            mmDevice = device;
+
+            try {
+                tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
+            } catch (IOException ioe) {
+                Log.e("aaa", "Socket's create() failed");
+            }
+            mmSocket = tmp;
+        } // constructor
+
+        public void run() {
+            btAdapter.cancelDiscovery();
+
+            try {
+                mmSocket.connect();
+            } catch (IOException connectException) {
+                try {
+                    mmSocket.close();
+                } catch (IOException closeException) {
+                   Log.e("aaa",  "Couldn't close the client socket", closeException);
+                }
+                return;
+            }
+
+            //manageMyConnectedSocket(mmSocket);
+
+        } // run()
+
+        public void cancel() {
+            try {
+                mmSocket.close();
+            } catch (IOException closeException) {
+                Log.e("aaa", "Couldn't close the client socket", closeException);
+            }
+        } // cancel()
+
+    } // ConnectThread
 
     @Override
     public void onDestroy() {
