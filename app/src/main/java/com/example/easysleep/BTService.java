@@ -21,7 +21,7 @@ public class BTService {
         public static final int MESSAGE_TOAST = 2;
     }
 
-    private class ConnectedThread extends Thread {
+    public class ConnectedThread extends Thread {
         private final BluetoothSocket btSocket;
         private final InputStream is;
         private final OutputStream os;

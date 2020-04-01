@@ -66,10 +66,10 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("Device found", "Name: " + name + " Address: " + address + " RSSI: " + rssi);
 
                 // this will be replaced by Easysleep BT
-                if(name.equals("SONAR064844"))
+                if(name.equals("PHONE_BT"))
                 {
-                    showToast("Sonaro available");
-                    statusView.setText("Sonaro found");
+                    showToast("Easysleep available");
+                    statusView.setText("Easysleep found");
                     btAdapter.cancelDiscovery();
                     connectButton.setEnabled(true);
                 }
@@ -178,12 +178,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 ConnectThread connectThread = new ConnectThread(device);
                 connectThread.start();
+
+                //BTService btService = new BTService();
             }
         });
     } // onCreate
 
     private class ConnectThread extends Thread {
-        private final BluetoothSocket mmSocket;
+        private BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
 
         public ConnectThread(BluetoothDevice device) {
@@ -191,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
             mmDevice = device;
 
             try {
-                tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
+                tmp = mmDevice.createRfcommSocketToServiceRecord(MY_UUID);
             } catch (IOException ioe) {
                 Log.e("aaa", "Socket's create() failed");
             }
@@ -206,10 +208,20 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException connectException) {
                 Log.e("aaa", "Couldn't connect to the socket", connectException);
                 try {
-                    mmSocket.close();
+                    Log.e("aaa", "...  trying fallback ...");
+                    mmSocket = (BluetoothSocket) mmDevice.getClass().getMethod(
+                            "createRfcommSocket", new Class[] {int.class}).invoke(mmDevice, 1);
+                    mmSocket.connect();
+                    Log.e("aaa", "Connected");
+                    //mmSocket.close();
                 } catch (IOException closeException) {
                    Log.e("aaa",  "Couldn't close the client socket", closeException);
+                } catch (NoSuchMethodException nsme) {
+                    Log.e("aaa", "couldn't establish bt connection", nsme);
+                } catch (IllegalAccessException | InvocationTargetException iae) {
+                    Log.e("aaa", "illegal access", iae);
                 }
+
                 return;
             }
 
