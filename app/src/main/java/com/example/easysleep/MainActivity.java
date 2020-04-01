@@ -204,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 mmSocket.connect();
             } catch (IOException connectException) {
+                Log.e("aaa", "Couldn't connect to the socket", connectException);
                 try {
                     mmSocket.close();
                 } catch (IOException closeException) {
