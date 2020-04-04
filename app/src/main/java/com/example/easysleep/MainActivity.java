@@ -2,22 +2,32 @@ package com.example.easysleep;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "Main Activity";
 
     Button btOnOff;
     Button btDiscoverable;
+    Button btDiscover;
     BluetoothAdapter btAdapter;
+    public ArrayList<BluetoothDevice> btDevices = new ArrayList<>();
+    public DeviceListAdapter deviceListAdapter;
+    ListView devicesListView;
 
     private final BroadcastReceiver broadcastReceiver1 = new BroadcastReceiver() {
         @Override
@@ -71,6 +81,25 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    private final BroadcastReceiver broadcastReceiver3 = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Log.d(TAG, "broadcastReceiver3: ACTION_FOUND");
+
+            if(action.equals(BluetoothDevice.ACTION_FOUND)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                btDevices.add(device);
+                Log.d(TAG, "onReceive(): " + device.getName() + " : " + device.getAddress());
+                deviceListAdapter = new DeviceListAdapter(context, R.layout.device_list_view, btDevices);
+                devicesListView.setAdapter(deviceListAdapter);
+            }
+
+
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +107,9 @@ public class MainActivity extends AppCompatActivity {
 
         btOnOff = findViewById(R.id.toggleBTButton);
         btDiscoverable = findViewById(R.id.btDiscoverable);
+        btDiscover = findViewById(R.id.btDiscover);
+        devicesListView = findViewById(R.id.lvDevices);
+
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -92,6 +124,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 toggleDiscoverable(60);
+            }
+        });
+
+        btDiscover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                discoverBTDevices();
             }
         });
     }
@@ -130,5 +169,40 @@ public class MainActivity extends AppCompatActivity {
 
         IntentFilter discoverableIntentFilter = new IntentFilter(btAdapter.ACTION_SCAN_MODE_CHANGED);
         registerReceiver(broadcastReceiver2, discoverableIntentFilter);
+    }
+
+    public void discoverBTDevices() {
+        Log.d(TAG, "discoverBTDevices(): discovering nearby devices");
+
+        if(btAdapter.isDiscovering()) {
+            btAdapter.cancelDiscovery();
+            Log.d(TAG, "discoverBTDevices(): Cancelling discovery");
+
+            checkBTPermission();
+
+            btAdapter.startDiscovery();
+            IntentFilter discoveryIntentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            registerReceiver(broadcastReceiver3, discoveryIntentFilter);
+        }
+        if(!btAdapter.isDiscovering()) {
+            checkBTPermission();
+            btAdapter.startDiscovery();
+            IntentFilter discoveryIntentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            registerReceiver(broadcastReceiver3, discoveryIntentFilter);
+        }
+    }
+
+    public void checkBTPermission() {
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            int permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
+            permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
+            if(permissionCheck != 0) {
+                this.requestPermissions(
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
+            } else {
+                Log.d(TAG, "checkBTPermission(): Build version > Lollipop");
+            }
+        }
     }
 }
