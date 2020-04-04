@@ -15,6 +15,8 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "Main Activity";
 
+    Button btOnOff;
+    Button btDiscoverable;
     BluetoothAdapter btAdapter;
 
     private final BroadcastReceiver broadcastReceiver1 = new BroadcastReceiver() {
@@ -42,12 +44,40 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private final BroadcastReceiver broadcastReceiver2 = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if(action.equals(btAdapter.ACTION_SCAN_MODE_CHANGED)) {
+                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, btAdapter.ERROR);
+
+                switch(state) {
+                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
+                        Log.d(TAG, "broadcastReceiver2: SCAN_MODE_CONNECTABLE_DISCOVERABLE");
+                        break;
+                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
+                        Log.d(TAG, "broadcastReceiver2: SCAN_MODE_CONNECTABLE");
+                        break;
+                    case BluetoothAdapter.SCAN_MODE_NONE:
+                        Log.d(TAG, "broadcastReceiver2: SCAN_MODE_NONE");
+                        break;
+                    case BluetoothAdapter.STATE_CONNECTING:
+                        Log.d(TAG, "broadcastReceiver2: STATE_CONNECTING");
+                        break;
+                    case BluetoothAdapter.STATE_CONNECTED:
+                        Log.d(TAG, "broadcastReceiver2: STATE_CONNECTED");
+                        break;
+                }
+            }
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button btOnOff = findViewById(R.id.toggleBTButton);
+        btOnOff = findViewById(R.id.toggleBTButton);
+        btDiscoverable = findViewById(R.id.btDiscoverable);
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -55,6 +85,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 toggleBT();
+            }
+        });
+
+        btDiscoverable.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleDiscoverable(60);
             }
         });
     }
@@ -83,5 +120,15 @@ public class MainActivity extends AppCompatActivity {
             IntentFilter btIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
             registerReceiver(broadcastReceiver1, btIntent);
         }
+    }
+
+    public void toggleDiscoverable(int discoverDuration) {
+        Log.d(TAG, "toggleDiscoverable(): toggling discoverability for 60 seconds");
+        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, discoverDuration);
+        startActivity(discoverableIntent);
+
+        IntentFilter discoverableIntentFilter = new IntentFilter(btAdapter.ACTION_SCAN_MODE_CHANGED);
+        registerReceiver(broadcastReceiver2, discoverableIntentFilter);
     }
 }
