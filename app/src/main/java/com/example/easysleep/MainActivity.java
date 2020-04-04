@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_BT_ENABLE = 0;
     private static final int REQUEST_BT_DISCOVER = 1;
 
-    UUID MY_UUID =  UUID.fromString("5e1c3306-72c5-11ea-bc55-0242ac130003");
+    UUID MY_UUID =  UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     //ConnectThread connectThread;
 
     Button searchButton;
