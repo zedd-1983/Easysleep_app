@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Easysleep</string>
+    <string name="bt_on_off">BT on/off</string>
 </resources>
