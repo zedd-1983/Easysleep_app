@@ -3,4 +3,7 @@
     <string name="bt_on_off">BT on/off</string>
     <string name="enable_discovery">Enable Discovery</string>
     <string name="discover_devices">Discover Devices</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="connect_to_easysleep">Connect to Easysleep</string>
 </resources>

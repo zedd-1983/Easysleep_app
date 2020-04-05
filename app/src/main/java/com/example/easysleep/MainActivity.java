@@ -1,6 +1,7 @@
 package com.example.easysleep;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
@@ -16,9 +17,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     public static final String TAG = "Main Activity";
@@ -26,10 +30,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Button btOnOff;
     Button btDiscoverable;
     Button btDiscover;
+    Button btTime;
+    Button btDate;
+    Button btConnect;
+    TextView incomingMessage;
+    StringBuilder messages;
+
+
     BluetoothAdapter btAdapter;
     public ArrayList<BluetoothDevice> btDevices = new ArrayList<>();
     public DeviceListAdapter deviceListAdapter;
     ListView devicesListView;
+
+    BTService btService;
+    private static final UUID UUID_INSECURE =
+            UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    BluetoothDevice btDevice;
 
     private final BroadcastReceiver broadcastReceiver1 = new BroadcastReceiver() {
         @Override
@@ -97,8 +113,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 deviceListAdapter = new DeviceListAdapter(context, R.layout.device_list_view, btDevices);
                 devicesListView.setAdapter(deviceListAdapter);
             }
-
-
         }
     };
 
@@ -112,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if(device.getBondState() == BluetoothDevice.BOND_BONDED) {
                     Log.d(TAG, "broadcastReceiver4: BOND_BONDED");
+                    btDevice = device;
                 }
                 if(device.getBondState() == BluetoothDevice.BOND_BONDING) {
                     Log.d(TAG, "broadcastReceiver4: BOND_BONDING");
@@ -123,6 +138,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     };
 
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            incomingMessage.setText("");
+            String text = intent.getStringExtra("theMessage");
+            //while(!text.equals("\n")) {
+            messages.append(text);
+            //}
+            //messages.append("\n");
+
+            incomingMessage.setText(messages);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,7 +160,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btOnOff = findViewById(R.id.toggleBTButton);
         btDiscoverable = findViewById(R.id.btDiscoverable);
         btDiscover = findViewById(R.id.btDiscover);
+
         devicesListView = findViewById(R.id.lvDevices);
+
+        btConnect = findViewById(R.id.btConnect);
+        btTime = findViewById(R.id.btTime);
+        btDate = findViewById(R.id.btDate);
+        incomingMessage = findViewById(R.id.incomingText);
+        messages = new StringBuilder();
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("incomingMessage"));
 
         IntentFilter bondFilter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         registerReceiver(broadcastReceiver4, bondFilter);
@@ -160,6 +198,52 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
 
         devicesListView.setOnItemClickListener(MainActivity.this);
+
+        btConnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startConnection();
+            }
+        });
+
+        btTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // send 'b' over to easysleep
+                incomingMessage.setText(null);
+                //incomingMessage.clearComposingText();
+                String timeString = "b";
+                Log.d(TAG, "btTime: sending " + timeString);
+                byte[] timeBytes = timeString.getBytes();
+
+                btService.write(timeBytes);
+            }
+        });
+
+        btDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // send 'c' over to easysleep
+                incomingMessage.setText(null);
+                //incomingMessage.clearComposingText();
+                String dateString = "c";
+                Log.d(TAG, "btDate: sending " + dateString);
+                byte[] dateBytes = dateString.getBytes();
+
+                btService.write(dateBytes);
+            }
+        });
+    }
+
+    // has to be paired first
+    public void startConnection() {
+        startBTConnection(btDevice, UUID_INSECURE);
+    }
+
+    public void startBTConnection(BluetoothDevice device, UUID uuid) {
+        Log.d(TAG, "startBTConnection(): Initializing RFCOM Bluetooth connection");
+        btService.startClient(device, uuid);
+
     }
 
     @Override
@@ -246,6 +330,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
             Log.d(TAG, "trying to bond with " + deviceName);
             btDevices.get(i).createBond();
+            btDevice = btDevices.get(i);
+
+            btService = new BTService(MainActivity.this);
         }
     }
 }

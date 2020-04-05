@@ -6,8 +6,11 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +30,7 @@ public class BTService {
 
     private final BluetoothAdapter btAdapter;
     private BluetoothDevice btDevice;
-    Context context;
+    Context btContext;
 
     private AcceptThread insecureAcceptThread;
     private ConnectThread connectThread;
@@ -35,8 +38,9 @@ public class BTService {
 
 
     public BTService(Context context) {
-        this.btAdapter = BluetoothAdapter.getDefaultAdapter();
-        this.context = context;
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        btContext = context;
+        start();
     }
 
     // accept thread runs waiting for incoming connections
@@ -166,9 +170,9 @@ public class BTService {
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
 
-            Toast.makeText(context, "Connection established", Toast.LENGTH_LONG);
+            //Toast.makeText(context, "Connection established", Toast.LENGTH_LONG);
 
-            try {
+             try {
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
             } catch (IOException ioe) {
@@ -188,9 +192,13 @@ public class BTService {
                     bytes = is.read(buffer);
                     String incomingMessage = new String(buffer, 0, bytes); // convert bytes to string
                     Log.d(TAG, "Incoming message: " + incomingMessage);
+
+                    Intent incomingMessageIntent = new Intent("incomingMessage");
+                    incomingMessageIntent.putExtra("theMessage", incomingMessage);
+                    LocalBroadcastManager.getInstance(btContext).sendBroadcast(incomingMessageIntent);
                 } catch (IOException e) {
                     Log.d(TAG, "Failed to read from InputStream" + e.getMessage());
-                    e.printStackTrace();
+                    //e.printStackTrace();
                     break;
                 }
             }
