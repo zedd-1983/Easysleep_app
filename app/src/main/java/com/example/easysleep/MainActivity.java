@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothHeadset;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,12 +14,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     public static final String TAG = "Main Activity";
 
     Button btOnOff;
@@ -100,6 +102,27 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private final BroadcastReceiver broadcastReceiver4 = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Log.d(TAG, "broadcastReceiver4: ACTION_BOND_STATE_CHANGED");
+
+            if(action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if(device.getBondState() == BluetoothDevice.BOND_BONDED) {
+                    Log.d(TAG, "broadcastReceiver4: BOND_BONDED");
+                }
+                if(device.getBondState() == BluetoothDevice.BOND_BONDING) {
+                    Log.d(TAG, "broadcastReceiver4: BOND_BONDING");
+                }
+                if(device.getBondState() == BluetoothDevice.BOND_NONE) {
+                    Log.d(TAG, "broadcastReceiver4: BOND_NONE");
+                }
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,6 +133,8 @@ public class MainActivity extends AppCompatActivity {
         btDiscover = findViewById(R.id.btDiscover);
         devicesListView = findViewById(R.id.lvDevices);
 
+        IntentFilter bondFilter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        registerReceiver(broadcastReceiver4, bondFilter);
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -133,6 +158,8 @@ public class MainActivity extends AppCompatActivity {
                 discoverBTDevices();
             }
         });
+
+        devicesListView.setOnItemClickListener(MainActivity.this);
     }
 
     @Override
@@ -140,6 +167,9 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onDestroy(): called");
         super.onDestroy();
         unregisterReceiver(broadcastReceiver1);
+        unregisterReceiver(broadcastReceiver2);
+        unregisterReceiver(broadcastReceiver3);
+        unregisterReceiver(broadcastReceiver4);
     }
 
     public void toggleBT() {
@@ -203,6 +233,19 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Log.d(TAG, "checkBTPermission(): Build version > Lollipop");
             }
+        }
+    }
+
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        btAdapter.cancelDiscovery();
+
+        Log.d(TAG, "onItemClick(): You clicked on a device");
+        String deviceName = btDevices.get(i).getName();
+        String deviceAddress = btDevices.get(i).getAddress();
+
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            Log.d(TAG, "trying to bond with " + deviceName);
+            btDevices.get(i).createBond();
         }
     }
 }
