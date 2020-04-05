@@ -7,8 +7,12 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.UUID;
 
 public class BTService {
@@ -19,7 +23,7 @@ public class BTService {
     private static final UUID UUID_INSECURE =
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private UUID deviceUUID;
-    ProgressDialog progressDialog;
+    //ProgressDialog progressDialog;
 
     private final BluetoothAdapter btAdapter;
     private BluetoothDevice btDevice;
@@ -27,6 +31,7 @@ public class BTService {
 
     private AcceptThread insecureAcceptThread;
     private ConnectThread connectThread;
+    private ConnectedThread connectedThread;
 
 
     public BTService(Context context) {
@@ -129,6 +134,7 @@ public class BTService {
         }
     }
 
+
     public synchronized void start() {
         Log.d(TAG, "START");
 
@@ -147,6 +153,82 @@ public class BTService {
 
         connectThread = new ConnectThread(device, uuid);
         connectThread.start();
+    }
+
+    private class ConnectedThread extends Thread {
+        private final BluetoothSocket btSocket;
+        private final InputStream is;
+        private final OutputStream os;
+
+        public ConnectedThread(BluetoothSocket socket) {
+            Log.d(TAG, "ConnectedThread Starting");
+            btSocket = socket;
+            InputStream tmpIn = null;
+            OutputStream tmpOut = null;
+
+            Toast.makeText(context, "Connection established", Toast.LENGTH_LONG);
+
+            try {
+                tmpIn = socket.getInputStream();
+                tmpOut = socket.getOutputStream();
+            } catch (IOException ioe) {
+                Log.d(TAG, "ConnectedThread(): failed to get input/output stream" + ioe.getMessage());
+            }
+
+            is = tmpIn;
+            os = tmpOut;
+        }
+
+        public void run() {
+            byte[] buffer = new byte[1024];
+            int bytes;
+
+            while(true) {
+                try {
+                    bytes = is.read(buffer);
+                    String incomingMessage = new String(buffer, 0, bytes); // convert bytes to string
+                    Log.d(TAG, "Incoming message: " + incomingMessage);
+                } catch (IOException e) {
+                    Log.d(TAG, "Failed to read from InputStream" + e.getMessage());
+                    e.printStackTrace();
+                    break;
+                }
+            }
+        }
+
+        public void write(byte[] bytes) {
+            String text = new String(bytes, Charset.defaultCharset());
+            try {
+                Log.d(TAG, "Writing to output stream" + text);
+                os.write(bytes);
+            } catch (IOException e) {
+                Log.d(TAG, "Failed to write to OuputStream" + e.getMessage());
+            }
+        }
+
+        public void cancel() {
+            Log.d(TAG, "Cancelling ConnectedThread");
+            try {
+                btSocket.close();
+            } catch (IOException ioe) {
+                Log.d(TAG, "cancel(): Canceling ConnectedThread failed" + ioe.getMessage());
+            }
+        }
+    }
+
+    private void connected(BluetoothSocket socket, BluetoothDevice device) {
+        Log.d(TAG, "Connected() starting");
+
+        connectedThread = new ConnectedThread(socket);
+        connectedThread.start();
+    }
+
+    public void write(byte[] out) {
+        //ConnectedThread conThread;
+        Log.d(TAG, "write(): write called");
+        //conThread = connectedThread;
+
+        connectedThread.write(out);
     }
 }
 
