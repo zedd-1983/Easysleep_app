@@ -10,21 +10,18 @@
     <Button
         android:id="@+id/toggleBTButton"
         android:layout_width="183dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="161dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="162dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="12dp"
         android:text="@string/bt_on_off"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btDiscoverable"
-        android:layout_width="182dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="24dp"
+        android:layout_width="183dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
         android:text="@string/enable_discovery"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
@@ -33,9 +30,9 @@
 
     <Button
         android:id="@+id/btDiscover"
-        android:layout_width="185dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="24dp"
+        android:layout_width="183dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
         android:text="@string/discover_devices"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -44,10 +41,11 @@
 
     <ListView
         android:id="@+id/lvDevices"
-        android:layout_width="360dp"
-        android:layout_height="98dp"
-        android:layout_marginTop="28dp"
+        android:layout_width="306dp"
+        android:layout_height="123dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btDiscover" />
 
@@ -55,44 +53,45 @@
         android:id="@+id/btTime"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginBottom="32dp"
         android:text="@string/time"
         app:layout_constraintBottom_toTopOf="@+id/incomingText"
+        app:layout_constraintEnd_toStartOf="@+id/btDate"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btConnect"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/btConnect" />
 
     <Button
         android:id="@+id/btDate"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="32dp"
         android:text="@string/date"
         app:layout_constraintBottom_toTopOf="@+id/incomingText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.845"
-        app:layout_constraintStart_toEndOf="@+id/btTime" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btTime"
+        app:layout_constraintTop_toBottomOf="@+id/btConnect" />
 
     <TextView
         android:id="@+id/incomingText"
-        android:layout_width="343dp"
-        android:layout_height="155dp"
-        android:layout_marginBottom="56dp"
+        android:layout_width="336dp"
+        android:layout_height="118dp"
+        android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btConnect"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/btConnect"
-        android:layout_width="169dp"
-        android:layout_height="63dp"
+        android:layout_width="251dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="16dp"
         android:text="@string/connect_to_easysleep"
-        app:layout_constraintBottom_toTopOf="@+id/btDate"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.475"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lvDevices"
-        app:layout_constraintVertical_bias="0.152" />
+        app:layout_constraintTop_toBottomOf="@+id/lvDevices" />
 </androidx.constraintlayout.widget.ConstraintLayout>
