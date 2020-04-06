@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Button btDiscover;
     Button btTime;
     Button btDate;
+    Button btGetData;
     Button btConnect;
     TextView incomingMessage;
     StringBuilder messages;
@@ -174,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btConnect = findViewById(R.id.btConnect);
         btTime = findViewById(R.id.btTime);
         btDate = findViewById(R.id.btDate);
+        btGetData = findViewById(R.id.btRequestData);
         incomingMessage = findViewById(R.id.incomingText);
         messages = new StringBuilder();
 
@@ -245,6 +247,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 byte[] dateBytes = dateString.getBytes();
 
                 btService.write(dateBytes);
+                messages.setLength(0);
+            }
+        });
+
+        btGetData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                incomingMessage.setText(null);
+                String dataRequest = "e";
+                Log.d(TAG, "bgGetData: sending " + dataRequest);
+                byte[] dataRequestBytes = dataRequest.getBytes();
+
+                btService.write(dataRequestBytes);
                 messages.setLength(0);
             }
         });
