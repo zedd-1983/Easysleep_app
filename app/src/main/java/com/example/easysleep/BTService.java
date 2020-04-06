@@ -91,9 +91,11 @@ public class BTService {
 
     private class ConnectThread extends Thread {
         private BluetoothSocket btSocket;
+        private String easysleepAddress = "98:D3:32:70:B9:20";
 
         public ConnectThread(BluetoothDevice device, UUID uuid) {
             Log.d(TAG, "ConnectThread(): started");
+            //btDevice = btAdapter.getRemoteDevice(easysleepAddress);
             btDevice = device;
             deviceUUID = uuid;
         }
@@ -170,8 +172,6 @@ public class BTService {
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
 
-            //Toast.makeText(context, "Connection established", Toast.LENGTH_LONG);
-
              try {
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
@@ -198,7 +198,6 @@ public class BTService {
                     LocalBroadcastManager.getInstance(btContext).sendBroadcast(incomingMessageIntent);
                 } catch (IOException e) {
                     Log.d(TAG, "Failed to read from InputStream" + e.getMessage());
-                    //e.printStackTrace();
                     break;
                 }
             }
@@ -232,10 +231,7 @@ public class BTService {
     }
 
     public void write(byte[] out) {
-        //ConnectedThread conThread;
         Log.d(TAG, "write(): write called");
-        //conThread = connectedThread;
-
         connectedThread.write(out);
     }
 }

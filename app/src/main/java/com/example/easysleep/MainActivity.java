@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Button btConnect;
     TextView incomingMessage;
     StringBuilder messages;
+    String messages1;
 
 
     BluetoothAdapter btAdapter;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     BluetoothDevice btDevice;
 
+    public String easysleepAddress = "98:D3:32:70:B9:20";
     private final BroadcastReceiver broadcastReceiver1 = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -147,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            incomingMessage.setText("");
+            //incomingMessage.setText("");
             String text = intent.getStringExtra("theMessage");
             messages.append(text);
 
@@ -229,6 +231,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 byte[] timeBytes = timeString.getBytes();
 
                 btService.write(timeBytes);
+                messages.setLength(0);
             }
         });
 
@@ -242,6 +245,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 byte[] dateBytes = dateString.getBytes();
 
                 btService.write(dateBytes);
+                messages.setLength(0);
             }
         });
     }
@@ -340,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String deviceAddress = btDevices.get(i).getAddress();
 
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            Log.d(TAG, "trying to bond with " + deviceName);
+            Log.d(TAG, "trying to bond with " + deviceName + " : " + deviceAddress);
             btDevices.get(i).createBond();
             btDevice = btDevices.get(i);
 
