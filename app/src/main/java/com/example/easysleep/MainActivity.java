@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 switch(state) {
                     case BluetoothAdapter.STATE_OFF:
                         btIcon.setImageResource(R.drawable.bt_off1);
+                        disableButtons();
                         Log.d(TAG, "broadcastReceiver1: STATE_OFF");
                         break;
                     case BluetoothAdapter.STATE_TURNING_OFF:
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         break;
                     case BluetoothAdapter.STATE_ON:
                         btIcon.setImageResource(R.drawable.bt_on1);
+                        enableButtons();
                         Log.d(TAG, "broadcastReceiver1: STATE_ON");
                         break;
                 }
@@ -181,8 +183,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         if(btAdapter.isEnabled()) {
             btIcon.setImageResource(R.drawable.bt_on1);
+            enableButtons();
         } else {
             btIcon.setImageResource(R.drawable.bt_off1);
+            disableButtons();
         }
 
         btOnOff.setOnClickListener(new View.OnClickListener() {
@@ -342,5 +346,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             btService = new BTService(MainActivity.this);
         }
+    }
+
+    public void enableButtons() {
+        btDiscoverable.setEnabled(true);
+        btDiscover.setEnabled(true);
+        btConnect.setEnabled(true);
+        btTime.setEnabled(true);
+        btDate.setEnabled(true);
+    }
+
+    public void disableButtons() {
+        btDiscoverable.setEnabled(false);
+        btDiscover.setEnabled(false);
+        btConnect.setEnabled(false);
+        btTime.setEnabled(false);
+        btDate.setEnabled(false);
     }
 }
