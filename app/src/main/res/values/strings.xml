@@ -9,4 +9,7 @@
     <string name="bluetooth_icon">bluetooth_icon</string>
     <string name="request_data">Request Data</string>
     <string name="easyssleep_connection_status">easyssleep connection status</string>
+    <string name="silence">Silence</string>
+    <string name="change_date_time">Change Date/Time</string>
+    <string name="change_dt">Change DT</string>
 </resources>

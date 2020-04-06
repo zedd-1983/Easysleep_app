@@ -33,13 +33,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Button btOnOff;
     Button btDiscoverable;
     Button btDiscover;
+    Button btConnect;
     Button btTime;
     Button btDate;
     Button btGetData;
-    Button btConnect;
+    Button btSilence;
+    Button btChangeDT;
     TextView incomingMessage;
     StringBuilder messages;
-    String messages1;
 
 
     BluetoothAdapter btAdapter;
@@ -153,10 +154,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            //incomingMessage.setText("");
             String text = intent.getStringExtra("theMessage");
             messages.append(text);
-
             incomingMessage.setText(messages);
         }
     };
@@ -169,7 +168,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btIcon = findViewById(R.id.btIcon);
         esStatusIcon = findViewById(R.id.esConnectedIcon);
 
-
         btOnOff = findViewById(R.id.toggleBTButton);
         btDiscoverable = findViewById(R.id.btDiscoverable);
         btDiscover = findViewById(R.id.btDiscover);
@@ -180,6 +178,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btTime = findViewById(R.id.btTime);
         btDate = findViewById(R.id.btDate);
         btGetData = findViewById(R.id.btRequestData);
+        btSilence = findViewById(R.id.btSilence);
+        btChangeDT = findViewById(R.id.btChangeDT);
+
         incomingMessage = findViewById(R.id.incomingText);
         messages = new StringBuilder();
 
@@ -260,10 +261,36 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(View v) {
                 incomingMessage.setText(null);
                 String dataRequest = "e";
-                Log.d(TAG, "bgGetData: sending " + dataRequest);
+                Log.d(TAG, "btGetData: sending " + dataRequest);
                 byte[] dataRequestBytes = dataRequest.getBytes();
 
                 btService.write(dataRequestBytes);
+                messages.setLength(0);
+            }
+        });
+
+        btSilence.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                incomingMessage.setText(null);
+                String silenceRequest = "a";
+                Log.d(TAG, "btSilence: sending " + silenceRequest);
+                byte[] silenceRequestBytes = silenceRequest.getBytes();
+
+                btService.write(silenceRequestBytes);
+                messages.setLength(0);
+            }
+        });
+
+        btChangeDT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                incomingMessage.setText(null);
+                String changeDTRequest = "d";
+                Log.d(TAG, "btChangeDT: sending " + changeDTRequest);
+                byte[] changeDTRequestBytes = changeDTRequest.getBytes();
+
+                btService.write(changeDTRequestBytes);
                 messages.setLength(0);
             }
         });
@@ -377,6 +404,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btConnect.setEnabled(true);
         btTime.setEnabled(true);
         btDate.setEnabled(true);
+        btGetData.setEnabled(true);
+        btSilence.setEnabled(true);
+        btChangeDT.setEnabled(true);
     }
 
     public void disableButtons() {
@@ -385,5 +415,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btConnect.setEnabled(false);
         btTime.setEnabled(false);
         btDate.setEnabled(false);
+        btGetData.setEnabled(false);
+        btSilence.setEnabled(false);
+        btChangeDT.setEnabled(false);
+    }
+
+    private String improveTimeString(String text) {
+        String myString = "";
+
+        return myString;
     }
 }

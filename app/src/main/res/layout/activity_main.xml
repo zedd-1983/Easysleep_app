@@ -109,7 +109,8 @@
         app:layout_constraintEnd_toStartOf="@+id/btDate"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/btTime"
-        app:layout_constraintTop_toBottomOf="@+id/btConnect" />
+        app:layout_constraintTop_toBottomOf="@+id/btConnect"
+        app:layout_constraintVertical_bias="0.296" />
 
     <ImageView
         android:id="@+id/esConnectedIcon"
@@ -120,4 +121,30 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btDiscoverable"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btSilence"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/silence"
+        app:layout_constraintBottom_toTopOf="@+id/incomingText"
+        app:layout_constraintEnd_toStartOf="@+id/btChangeDT"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btRequestData" />
+
+    <Button
+        android:id="@+id/btChangeDT"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/change_dt"
+        app:layout_constraintBottom_toTopOf="@+id/incomingText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btSilence"
+        app:layout_constraintTop_toBottomOf="@+id/btRequestData" />
 </androidx.constraintlayout.widget.ConstraintLayout>
