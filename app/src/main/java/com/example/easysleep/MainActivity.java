@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static final String TAG = "Main Activity";
 
     ImageView btIcon;
+    ImageView esStatusIcon;
     Button btOnOff;
     Button btDiscoverable;
     Button btDiscover;
@@ -135,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if(device.getBondState() == BluetoothDevice.BOND_BONDED) {
                     Log.d(TAG, "broadcastReceiver4: BOND_BONDED");
+                    esStatusIcon.setImageResource(R.drawable.es_connected);
                     btDevice = device;
                 }
                 if(device.getBondState() == BluetoothDevice.BOND_BONDING) {
@@ -142,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
                 if(device.getBondState() == BluetoothDevice.BOND_NONE) {
                     Log.d(TAG, "broadcastReceiver4: BOND_NONE");
+                    esStatusIcon.setImageResource(R.drawable.es_disconnected);
                 }
             }
         }
@@ -164,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_main);
 
         btIcon = findViewById(R.id.btIcon);
+        esStatusIcon = findViewById(R.id.esConnectedIcon);
 
 
         btOnOff = findViewById(R.id.toggleBTButton);
