@@ -6,4 +6,5 @@
     <string name="date">Date</string>
     <string name="time">Time</string>
     <string name="connect_to_easysleep">Connect to Easysleep</string>
+    <string name="bluetooth_icon">bluetooth_icon</string>
 </resources>

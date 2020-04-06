@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -27,6 +28,7 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     public static final String TAG = "Main Activity";
 
+    ImageView btIcon;
     Button btOnOff;
     Button btDiscoverable;
     Button btDiscover;
@@ -56,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 switch(state) {
                     case BluetoothAdapter.STATE_OFF:
+                        btIcon.setImageResource(R.drawable.bt_off1);
                         Log.d(TAG, "broadcastReceiver1: STATE_OFF");
                         break;
                     case BluetoothAdapter.STATE_TURNING_OFF:
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         Log.d(TAG, "broadcastReceiver1: STATE__TURNING_ON");
                         break;
                     case BluetoothAdapter.STATE_ON:
+                        btIcon.setImageResource(R.drawable.bt_on1);
                         Log.d(TAG, "broadcastReceiver1: STATE_ON");
                         break;
                 }
@@ -143,10 +147,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         public void onReceive(Context context, Intent intent) {
             incomingMessage.setText("");
             String text = intent.getStringExtra("theMessage");
-            //while(!text.equals("\n")) {
             messages.append(text);
-            //}
-            //messages.append("\n");
 
             incomingMessage.setText(messages);
         }
@@ -156,6 +157,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        btIcon = findViewById(R.id.btIcon);
+
 
         btOnOff = findViewById(R.id.toggleBTButton);
         btDiscoverable = findViewById(R.id.btDiscoverable);
@@ -175,6 +179,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         registerReceiver(broadcastReceiver4, bondFilter);
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(btAdapter.isEnabled()) {
+            btIcon.setImageResource(R.drawable.bt_on1);
+        } else {
+            btIcon.setImageResource(R.drawable.bt_off1);
+        }
 
         btOnOff.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -211,7 +220,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(View v) {
                 // send 'b' over to easysleep
                 incomingMessage.setText(null);
-                //incomingMessage.clearComposingText();
                 String timeString = "b";
                 Log.d(TAG, "btTime: sending " + timeString);
                 byte[] timeBytes = timeString.getBytes();
@@ -225,7 +233,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(View v) {
                 // send 'c' over to easysleep
                 incomingMessage.setText(null);
-                //incomingMessage.clearComposingText();
                 String dateString = "c";
                 Log.d(TAG, "btDate: sending " + dateString);
                 byte[] dateBytes = dateString.getBytes();
@@ -254,6 +261,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         unregisterReceiver(broadcastReceiver2);
         unregisterReceiver(broadcastReceiver3);
         unregisterReceiver(broadcastReceiver4);
+        unregisterReceiver(mReceiver);
     }
 
     public void toggleBT() {
