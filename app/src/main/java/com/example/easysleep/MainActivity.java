@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -40,6 +41,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Button btSilence;
     Button btChangeDT;
     TextView incomingMessage;
+    EditText ptText;
+    Button btSendDT;
+
     StringBuilder messages;
 
 
@@ -184,6 +188,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         incomingMessage = findViewById(R.id.incomingText);
         messages = new StringBuilder();
 
+        ptText = findViewById(R.id.ptDateTime);
+        ptText.setEnabled(false);
+        btSendDT = findViewById(R.id.btSendDT);
+        btSendDT.setEnabled(false);
+
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("incomingMessage"));
 
         IntentFilter bondFilter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
@@ -292,8 +301,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 btService.write(changeDTRequestBytes);
                 messages.setLength(0);
+
+                btSendDT.setEnabled(true);
+                ptText.setEnabled(true);
             }
         });
+
+        btSendDT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Editable dateTimeFromPlainText = ptText.getText();
+                String newDateTime = dateTimeFromPlainText.toString() + "\n";
+                Log.d(TAG, "New DateTime: " + newDateTime);
+                byte[] dateTimeBytes = newDateTime.getBytes();
+
+                btService.write(dateTimeBytes);
+                btSendDT.setEnabled(false);
+                ptText.setEnabled(false);
+            }
+        });
+
+
     }
 
     // has to be paired first

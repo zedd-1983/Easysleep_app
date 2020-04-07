@@ -40,8 +40,8 @@
 
     <ListView
         android:id="@+id/lvDevices"
-        android:layout_width="306dp"
-        android:layout_height="123dp"
+        android:layout_width="315dp"
+        android:layout_height="76dp"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
@@ -71,12 +71,12 @@
 
     <TextView
         android:id="@+id/incomingText"
-        android:layout_width="336dp"
-        android:layout_height="118dp"
-        android:layout_marginBottom="24dp"
+        android:layout_width="330dp"
+        android:layout_height="69dp"
+        android:layout_marginBottom="104dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintHorizontal_bias="0.403"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -147,4 +147,29 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/btSilence"
         app:layout_constraintTop_toBottomOf="@+id/btRequestData" />
+
+    <EditText
+        android:id="@+id/ptDateTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/datetime"
+        android:importantForAutofill="no"
+        android:inputType="datetime"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btSendDT"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/incomingText" />
+
+    <Button
+        android:id="@+id/btSendDT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/send"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/ptDateTime"
+        app:layout_constraintTop_toBottomOf="@+id/incomingText" />
 </androidx.constraintlayout.widget.ConstraintLayout>
