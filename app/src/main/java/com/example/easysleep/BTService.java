@@ -12,13 +12,14 @@ import android.widget.Toast;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.UUID;
 
-public class BTService {
+public class BTService{
     public static final String TAG = "BTService";
     public static final String appName = "PHONE_BT";
 
@@ -186,16 +187,20 @@ public class BTService {
         public void run() {
             byte[] buffer = new byte[1024];
             int bytes;
+            //String finalMessage = "";
 
             while(true) {
                 try {
                     bytes = is.read(buffer);
                     String incomingMessage = new String(buffer, 0, bytes); // convert bytes to string
                     Log.d(TAG, "Incoming message: " + incomingMessage);
+                    //finalMessage = finalMessage.concat(incomingMessage);
+                    //Log.d(TAG, "Incoming message concat: " + finalMessage);
 
                     Intent incomingMessageIntent = new Intent("incomingMessage");
                     incomingMessageIntent.putExtra("theMessage", incomingMessage);
                     LocalBroadcastManager.getInstance(btContext).sendBroadcast(incomingMessageIntent);
+                    //finalMessage = "";
                 } catch (IOException e) {
                     Log.d(TAG, "Failed to read from InputStream" + e.getMessage());
                     break;

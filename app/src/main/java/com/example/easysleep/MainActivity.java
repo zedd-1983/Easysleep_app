@@ -24,6 +24,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Button btSendDT;
 
     StringBuilder messages;
+    String incompleteMessage;
 
 
     BluetoothAdapter btAdapter;
@@ -160,7 +162,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         public void onReceive(Context context, Intent intent) {
             String text = intent.getStringExtra("theMessage");
             messages.append(text);
+
             incomingMessage.setText(messages);
+
+            Log.d(TAG, "incomingMessage: " + incomingMessage.getText());
+
+            if(messages.length() <=8 ) {
+                Log.d(TAG, "incomingMessage is TIME");
+            } else if ((messages.length() > 8) && (messages.length() <=10 )) {
+                Log.d(TAG, "incomingMessage is DATE");
+            } else if (messages.length() > 10) {
+                Log.d(TAG, "incomingMessage is DATA");
+            }
         }
     };
 
