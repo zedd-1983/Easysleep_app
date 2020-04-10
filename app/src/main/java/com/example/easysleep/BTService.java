@@ -7,16 +7,21 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
+import android.renderscript.ScriptGroup;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 import java.util.UUID;
 
 public class BTService{
@@ -187,20 +192,23 @@ public class BTService{
         public void run() {
             byte[] buffer = new byte[1024];
             int bytes;
-            //String finalMessage = "";
+            String str = "";
+            String finalMessage = "";
 
             while(true) {
                 try {
-                    bytes = is.read(buffer);
-                    String incomingMessage = new String(buffer, 0, bytes); // convert bytes to string
-                    Log.d(TAG, "Incoming message: " + incomingMessage);
-                    //finalMessage = finalMessage.concat(incomingMessage);
-                    //Log.d(TAG, "Incoming message concat: " + finalMessage);
+//                    bytes = is.read(buffer);
+//                    String incomingMessage = new String(buffer, 0, bytes); // convert bytes to string
+//                    Intent incomingMessageIntent = new Intent("incomingMessage");
+//                    incomingMessageIntent.putExtra("theMessage", incomingMessage);
+//                    LocalBroadcastManager.getInstance(btContext).sendBroadcast(incomingMessageIntent);
 
-                    Intent incomingMessageIntent = new Intent("incomingMessage");
-                    incomingMessageIntent.putExtra("theMessage", incomingMessage);
-                    LocalBroadcastManager.getInstance(btContext).sendBroadcast(incomingMessageIntent);
-                    //finalMessage = "";
+                    BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.ISO_8859_1), 1024);
+                    Scanner scan = new Scanner(br);
+                    scan.useDelimiter("\0");
+                    while(scan.hasNext()) {
+                        Log.d(TAG, "another line");
+                    }
                 } catch (IOException e) {
                     Log.d(TAG, "Failed to read from InputStream" + e.getMessage());
                     break;
