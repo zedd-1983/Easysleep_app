@@ -197,18 +197,18 @@ public class BTService{
 
             while(true) {
                 try {
-//                    bytes = is.read(buffer);
-//                    String incomingMessage = new String(buffer, 0, bytes); // convert bytes to string
-//                    Intent incomingMessageIntent = new Intent("incomingMessage");
-//                    incomingMessageIntent.putExtra("theMessage", incomingMessage);
-//                    LocalBroadcastManager.getInstance(btContext).sendBroadcast(incomingMessageIntent);
+                    bytes = is.read(buffer);
+                    String incomingMessage = new String(buffer, 0, bytes); // convert bytes to string
+                    Intent incomingMessageIntent = new Intent("incomingMessage");
+                    incomingMessageIntent.putExtra("theMessage", incomingMessage);
+                    LocalBroadcastManager.getInstance(btContext).sendBroadcast(incomingMessageIntent);
 
-                    BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.ISO_8859_1), 1024);
-                    Scanner scan = new Scanner(br);
-                    scan.useDelimiter("\0");
-                    while(scan.hasNext()) {
-                        Log.d(TAG, "another line");
-                    }
+//                    BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.ISO_8859_1), 1024);
+//                    Scanner scan = new Scanner(br);
+//                    scan.useDelimiter("\0");
+//                    while(scan.hasNext()) {
+//                        Log.d(TAG, "another line");
+//                    }
                 } catch (IOException e) {
                     Log.d(TAG, "Failed to read from InputStream" + e.getMessage());
                     break;
