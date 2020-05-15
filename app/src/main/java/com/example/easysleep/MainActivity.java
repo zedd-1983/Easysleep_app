@@ -11,6 +11,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -22,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -29,6 +33,7 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     public static final String TAG = "Main Activity";
+    MediaPlayer alarmPlayer;
 
     ImageView btIcon;
     ImageView esStatusIcon;
@@ -162,6 +167,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         public void onReceive(Context context, Intent intent) {
             String text = intent.getStringExtra("theMessage");
             messages.append(text);
+            if(text.contains("X")) {
+                Uri alarmSound =
+                        RingtoneManager. getDefaultUri (RingtoneManager.TYPE_ALARM );
+                alarmPlayer = MediaPlayer. create (getApplicationContext(), alarmSound);
+                alarmPlayer.start();
+                alarmPlayer.setLooping(true);
+                Toast.makeText(context, "--- ALARM ---", Toast.LENGTH_LONG).show();
+            }
 
             incomingMessage.setText(messages);
 
@@ -296,6 +309,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(View v) {
                 incomingMessage.setText(null);
                 String silenceRequest = "a";
+                alarmPlayer.stop();
                 Log.d(TAG, "btSilence: sending " + silenceRequest);
                 byte[] silenceRequestBytes = silenceRequest.getBytes();
 
